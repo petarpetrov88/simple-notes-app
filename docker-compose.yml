@@ -1,0 +1,33 @@
+version: '3.2'
+
+services:
+
+  rest:
+    container_name: notes-rest
+    build: rest
+    ports:
+      - 20080:80
+    volumes:
+      # Re-use local composer cache via host-volume
+      - ~/.composer-docker/cache:/root/.composer/cache:delegated
+      # Mount source-code for development
+      - ./:/app
+
+  frontend:
+    container_name: notes-react
+    build: frontend
+    ports:
+      - 20081:3000
+    volumes:
+      - ./frontend:/app
+
+  mysql:
+    container_name: notes-mysql
+    image: mysql:5.7
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpasswd
+      - MYSQL_DATABASE=sample_app
+      - MYSQL_USER=sample_user
+      - MYSQL_PASSWORD=samplepass
+    ports:
+      - 9906:3306
